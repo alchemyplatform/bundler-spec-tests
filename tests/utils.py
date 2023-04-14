@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 from solcx import compile_source
 from .types import RPCRequest, UserOperation, CommandLineArgs
@@ -105,6 +106,12 @@ def assert_rpc_error(response, message, code):
     except AttributeError as exc:
         raise Exception(f"expected error object, got:\n{response}") from exc
 
+def assert_rpc_code(response, code):
+    try:
+        assert response.code == code
+    except AttributeError as exc:
+        raise Exception(f"expected error object, got:\n{response}") from exc
+
 
 def get_sender_address(w3, initcode):
     helper = deploy_contract(w3, "Helper")
@@ -125,6 +132,7 @@ def deposit_to_undeployed_sender(w3, entrypoint_contract, initcode):
 def send_bundle_now():
     try:
         RPCRequest(method="debug_bundler_sendBundleNow").send()
+        sleep(5)
     except KeyError:
         pass
 

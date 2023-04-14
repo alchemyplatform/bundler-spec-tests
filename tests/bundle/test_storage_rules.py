@@ -21,7 +21,10 @@ def assert_ok(response):
         raise Exception(f"expected result object, got:\n{response}") from exc
 
 
-def assert_error(response):
+def assert_unstaked_error(response):
+    assert_rpc_error(response, response.message, RPCErrorCode.INAVLID_PAYMASTER_STAKE)
+
+def assert_opcode_error(response):
     assert_rpc_error(response, response.message, RPCErrorCode.BANNED_OPCODE)
 
 
@@ -90,21 +93,21 @@ cases = [
         "no_storage", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_ok
     ),
     StorageTestCase(
-        "storage", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_error
+        "storage", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_unstaked_error
     ),
     StorageTestCase(
         "reference_storage",
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "reference_storage_struct",
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "account_storage", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_ok
@@ -128,17 +131,17 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster),
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
-        "context", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_error
+        "context", UNSTAKED, PAYMASTER, build_userop_for_paymaster, assert_unstaked_error
     ),
     StorageTestCase(
         "external_storage",
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     # staked paymaster
     StorageTestCase(
@@ -185,24 +188,24 @@ cases = [
         "context", STAKED, PAYMASTER, build_userop_for_paymaster, assert_ok
     ),
     StorageTestCase(
-        "external_storage", STAKED, PAYMASTER, build_userop_for_paymaster, assert_error
+        "external_storage", STAKED, PAYMASTER, build_userop_for_paymaster, assert_opcode_error
     ),
     # unstaked factory
     StorageTestCase(
         "no_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_ok
     ),
     StorageTestCase(
-        "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_error
+        "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_unstaked_error
     ),
     StorageTestCase(
-        "reference_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_error
+        "reference_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_unstaked_error
     ),
     StorageTestCase(
         "reference_storage_struct",
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "account_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_ok
@@ -212,17 +215,17 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "account_reference_storage_struct",
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
-        "external_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_error
+        "external_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_opcode_error
     ),
     # staked factory
     StorageTestCase("no_storage", STAKED, FACTORY, build_userop_for_factory, assert_ok),
@@ -251,7 +254,7 @@ cases = [
         assert_ok,
     ),
     StorageTestCase(
-        "external_storage", STAKED, FACTORY, build_userop_for_factory, assert_error
+        "external_storage", STAKED, FACTORY, build_userop_for_factory, assert_opcode_error
     ),
     # unstaked sender
     StorageTestCase("no_storage", UNSTAKED, SENDER, build_userop_for_sender, assert_ok),
@@ -270,7 +273,7 @@ cases = [
         UNSTAKED,
         SENDER,
         with_initcode(build_userop_for_sender),
-        assert_error,
+        assert_ok,
     ),
     StorageTestCase(
         "account_reference_storage_struct",
@@ -280,7 +283,7 @@ cases = [
         assert_ok,
     ),
     StorageTestCase(
-        "external_storage", UNSTAKED, SENDER, build_userop_for_sender, assert_error
+        "external_storage", UNSTAKED, SENDER, build_userop_for_sender, assert_opcode_error
     ),
     # staked sender
     StorageTestCase("no_storage", STAKED, SENDER, build_userop_for_sender, assert_ok),
@@ -298,7 +301,7 @@ cases = [
         assert_ok,
     ),
     StorageTestCase(
-        "external_storage", STAKED, SENDER, build_userop_for_sender, assert_error
+        "external_storage", STAKED, SENDER, build_userop_for_sender, assert_opcode_error
     ),
 ]
 

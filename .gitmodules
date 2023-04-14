@@ -4,5 +4,5 @@
 	branch = develop
 [submodule "spec"]
 	path = spec
-	url = https://github.com/eth-infinitism/bundler-spec.git
+	url = https://github.com/alchemyplatform/bundler-spec.git
 	branch = main

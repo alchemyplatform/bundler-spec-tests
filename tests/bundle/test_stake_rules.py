@@ -84,7 +84,7 @@ def test_unstaked_sender_storage_initcode_drop(
     response = UserOperation(
         sender=sender, signature=signature, initCode=initCode
     ).send()
-    assert_rpc_error(response, "unstaked account", RPCErrorCode.BANNED_OPCODE)
+    assert_rpc_error(response, "unstaked account", RPCErrorCode.INAVLID_PAYMASTER_STAKE)
 
 
 @pytest.mark.usefixtures("clear_state")
@@ -149,7 +149,7 @@ def test_unstaked_factory_storage_drop(w3, entrypoint_contract, factory_contract
         {"value": 10**18, "from": w3.eth.accounts[0]}
     )
     response = UserOperation(sender=sender, initCode=initCode).send()
-    assert_rpc_error(response, "unstaked factory", RPCErrorCode.BANNED_OPCODE)
+    assert_rpc_error(response, "unstaked factory", RPCErrorCode.INAVLID_PAYMASTER_STAKE)
 
 
 @pytest.mark.usefixtures("clear_state")
@@ -205,7 +205,7 @@ def test_unstaked_paymaster_storage_drop(paymaster_contract, wallet_contract, ru
     response = UserOperation(
         sender=wallet_contract.address, paymasterAndData=paymasterAndData
     ).send()
-    assert_rpc_error(response, "unstaked paymaster", RPCErrorCode.BANNED_OPCODE)
+    assert_rpc_error(response, "unstaked paymaster", RPCErrorCode.INAVLID_PAYMASTER_STAKE)
 
 
 @pytest.mark.usefixtures("clear_state")
@@ -225,7 +225,7 @@ def test_unstaked_paymaster_storage_initcode_drop(
         paymasterAndData=paymasterAndData,
         initCode=initCode,
     ).send()
-    assert_rpc_error(response, "", RPCErrorCode.BANNED_OPCODE)
+    assert_rpc_error(response, "", RPCErrorCode.INAVLID_PAYMASTER_STAKE)
 
 
 @pytest.mark.usefixtures("clear_state")
