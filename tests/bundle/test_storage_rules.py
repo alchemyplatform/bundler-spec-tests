@@ -15,7 +15,10 @@ from tests.utils import (
 )
 
 
-def assert_error(response):
+def assert_unstaked_error(response):
+    assert_rpc_error(response, response.message, RPCErrorCode.INAVLID_PAYMASTER_STAKE)
+
+def assert_opcode_error(response):
     assert_rpc_error(response, response.message, RPCErrorCode.BANNED_OPCODE)
 
 
@@ -109,7 +112,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-032",
@@ -117,7 +120,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-032",
@@ -125,7 +128,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-010",
@@ -157,7 +160,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster),
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "EREP-050",
@@ -165,7 +168,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-032",
@@ -173,7 +176,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -181,7 +184,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -189,7 +192,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     # staked paymaster
     StorageTestCase(
@@ -248,7 +251,8 @@ cases = [
         "account_reference_storage_init_code",
         STAKED,
         PAYMASTER,
-        with_initcode(build_userop_for_paymaster),
+        # FACTORY MUST BE STAKED TO USE ASSOCIATED STORAGE
+        with_initcode(build_userop_for_paymaster, deploy_staked_factory),
         assert_ok,
     ),
     StorageTestCase(
@@ -260,7 +264,7 @@ cases = [
         STAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -268,7 +272,7 @@ cases = [
         STAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -276,14 +280,14 @@ cases = [
         STAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_error,
+        assert_opcode_error,
     ),
     # unstaked factory
     StorageTestCase(
         "STO-000", "no_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_ok
     ),
     StorageTestCase(
-        "STO-000", "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_error
+        "STO-000", "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_unstaked_error
     ),
     StorageTestCase(
         "STO-000",
@@ -291,7 +295,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-032",
@@ -299,7 +303,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-010",
@@ -315,7 +319,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-021",
@@ -323,7 +327,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-000",
@@ -331,7 +335,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-042",
@@ -347,7 +351,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -355,7 +359,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -363,7 +367,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -371,7 +375,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -379,7 +383,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -387,7 +391,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -395,7 +399,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -403,7 +407,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -411,7 +415,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     # staked factory
     StorageTestCase(
@@ -466,7 +470,7 @@ cases = [
         STAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -474,7 +478,7 @@ cases = [
         STAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-020",
@@ -482,7 +486,7 @@ cases = [
         STAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_error,
+        assert_opcode_error,
     ),
     # unstaked sender
     StorageTestCase(
@@ -510,7 +514,7 @@ cases = [
         UNSTAKED,
         SENDER,
         with_initcode(build_userop_for_sender),
-        assert_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-022",
@@ -526,7 +530,8 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
-        assert_error,
+        # Factory is staked, associated storage reference is allowed
+        assert_ok,
     ),
     StorageTestCase(
         "STO-021",
@@ -542,10 +547,10 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
-        "OP-020", "out_of_gas", UNSTAKED, SENDER, build_userop_for_sender, assert_error
+        "OP-020", "out_of_gas", UNSTAKED, SENDER, build_userop_for_sender, assert_opcode_error
     ),
     StorageTestCase(
         "OP-020",
@@ -553,7 +558,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     # staked sender
     StorageTestCase(
@@ -579,7 +584,7 @@ cases = [
         assert_ok,
     ),
     StorageTestCase(
-        "OP-020", "out_of_gas", STAKED, SENDER, build_userop_for_sender, assert_error
+        "OP-020", "out_of_gas", STAKED, SENDER, build_userop_for_sender, assert_opcode_error
     ),
     StorageTestCase(
         "OP-020",
@@ -587,7 +592,7 @@ cases = [
         STAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "STO-000",
@@ -595,7 +600,7 @@ cases = [
         STAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-011",
@@ -603,7 +608,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-061",
@@ -611,7 +616,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-053",
@@ -635,7 +640,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -643,7 +648,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -651,7 +656,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-054",
@@ -659,7 +664,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-054",
@@ -667,7 +672,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-054",
@@ -675,7 +680,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -683,7 +688,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -691,7 +696,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -699,7 +704,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-041",
@@ -707,7 +712,7 @@ cases = [
         UNSTAKED,
         SENDER,
         build_userop_for_sender,
-        assert_error,
+        assert_opcode_error,
     ),
     StorageTestCase(
         "OP-062",
