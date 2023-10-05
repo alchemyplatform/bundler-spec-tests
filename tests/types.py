@@ -39,8 +39,8 @@ class UserOperation:
     callGasLimit: HexStr = hex(3 * 10**5)
     verificationGasLimit: HexStr = hex(10**6)
     preVerificationGas: HexStr = hex(3 * 10**5)
-    maxFeePerGas: HexStr = hex(4 * 10**9)
-    maxPriorityFeePerGas: HexStr = hex(1 * 10**9)
+    maxFeePerGas: HexStr = hex(20 * 10**9)
+    maxPriorityFeePerGas: HexStr = hex(10 * 10**9)
     paymasterAndData: HexStr = "0x"
     signature: HexStr = "0x"
 
