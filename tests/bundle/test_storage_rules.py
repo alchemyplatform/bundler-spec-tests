@@ -248,7 +248,8 @@ cases = [
         "account_reference_storage_init_code",
         STAKED,
         PAYMASTER,
-        with_initcode(build_userop_for_paymaster),
+        # FACTORY MUST BE STAKED TO USE ASSOCIATED STORAGE
+        with_initcode(build_userop_for_paymaster, deploy_staked_factory),
         assert_ok,
     ),
     StorageTestCase(
@@ -526,7 +527,8 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
-        assert_error,
+        # Factory is staked, associated storage reference is allowed
+        assert_ok,
     ),
     StorageTestCase(
         "STO-021",
