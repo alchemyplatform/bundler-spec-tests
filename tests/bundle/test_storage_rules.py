@@ -192,7 +192,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         build_userop_for_paymaster,
-        assert_opcode_error,
+        assert_unstaked_error,
     ),
     # staked paymaster
     StorageTestCase(
@@ -287,7 +287,7 @@ cases = [
         "STO-000", "no_storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_ok
     ),
     StorageTestCase(
-        "STO-000", "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_opcode_error
+        "STO-000", "storage", UNSTAKED, FACTORY, build_userop_for_factory, assert_unstaked_error
     ),
     StorageTestCase(
         "STO-000",
@@ -295,7 +295,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_opcode_error,
+        assert_unstaked_error,
     ),
     StorageTestCase(
         "STO-032",
@@ -415,7 +415,7 @@ cases = [
         UNSTAKED,
         FACTORY,
         build_userop_for_factory,
-        assert_opcode_error,
+        assert_unstaked_error,
     ),
     # staked factory
     StorageTestCase(
