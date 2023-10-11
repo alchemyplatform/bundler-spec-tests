@@ -248,7 +248,7 @@ cases = [
         "account_reference_storage_init_code",
         STAKED,
         PAYMASTER,
-        # FACTORY MUST BE STAKED TO USE ASSOCIATED STORAGE
+        # factory must be staked to use associated storage
         with_initcode(build_userop_for_paymaster, deploy_staked_factory),
         assert_ok,
     ),
