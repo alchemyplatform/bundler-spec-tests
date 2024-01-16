@@ -12,6 +12,7 @@ from tests.utils import (
     deploy_contract,
     deploy_and_deposit,
     deposit_to_undeployed_sender,
+    send_bundle_now,
     staked_contract,
     userop_hash,
 )
@@ -771,12 +772,12 @@ def test_rule(w3, entrypoint_contract, case):
     case.assert_func(response)
 
 
-@pytest.mark.usefixtures("clear_state", "auto_bundling_mode")
+@pytest.mark.usefixtures("clear_state", "manual_bundling_mode")
 def test_enough_verification_gas(w3, entrypoint_contract):
     beneficiary = w3.eth.accounts[0]
 
     callGasLimit = hex(20000)
-    wallet = deploy_wallet_contract(w3)
+    wallet = deploy_and_deposit(w3, entrypoint_contract, "SimpleWallet", False)
     calldata = wallet.encodeABI(fn_name="wasteGas")
 
     # Estimating gas for the op's gas limits
@@ -843,8 +844,7 @@ def test_enough_verification_gas(w3, entrypoint_contract):
     nonce_before = entrypoint_contract.functions.getNonce(wallet.address, 0).call()
     response = userop.send()
     nonce_after = entrypoint_contract.functions.getNonce(wallet.address, 0).call()
-    assert nonce_before == nonce_after, "handleoOps not reverted onchain"
-    print(response)
+    assert nonce_before == nonce_after, "handleOps not reverted onchain"
     assert_rpc_error(
         response,
         "",
@@ -854,6 +854,7 @@ def test_enough_verification_gas(w3, entrypoint_contract):
     # sanity check, should succeed with enough gas that was returned by the bundler
     userop.verificationGasLimit = verification_gas
     response = userop.send()
+    send_bundle_now()
     nonce_after = entrypoint_contract.functions.getNonce(wallet.address, 0).call()
     assert (
         nonce_before + 1 == nonce_after
