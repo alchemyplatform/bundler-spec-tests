@@ -18,9 +18,9 @@ THROTTLED_ENTITY_MEMPOOL_COUNT = 4
 
 @dataclass()
 class ReputationStatus:
-    OK = 0
-    THROTTLED = 1
-    BANNED = 2
+    OK = "ok"
+    THROTTLED = "throttled"
+    BANNED = "banned"
 
 
 def get_max_seen(ops_seen):
@@ -46,7 +46,7 @@ def assert_reputation_status(address, status, ops_seen=None, ops_included=None):
         None,
     )
     assert reputation is not None, "Could not find reputation of " + address.lower()
-    assert int(reputation.get("status", "-0x1"), 16) == status, (
+    assert reputation.get("status") == status, (
         "Incorrect reputation status of " + address.lower()
     )
     assert ops_seen is None or ops_seen == int(
