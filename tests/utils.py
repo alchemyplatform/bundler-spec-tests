@@ -118,6 +118,11 @@ def assert_rpc_error(response, message, code):
     except AttributeError as exc:
         raise Exception(f"expected error object, got:\n{response}") from exc
 
+def assert_rpc_code(response, code):
+    try:
+        assert response.code == code
+    except AttributeError as exc:
+        raise Exception(f"expected error object, got:\n{response}") from exc
 
 def get_sender_address(w3, initcode):
     helper = deploy_contract(w3, "Helper")
@@ -209,8 +214,8 @@ def set_reputation(address, ops_seen=1, ops_included=2, url=None):
                 [
                     {
                         "address": address,
-                        "opsSeen": ops_seen,
-                        "opsIncluded": ops_included,
+                        "opsSeen": hex(ops_seen),
+                        "opsIncluded": hex(ops_included),
                     }
                 ],
                 CommandLineArgs.entrypoint,
