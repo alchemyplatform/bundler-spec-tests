@@ -130,7 +130,7 @@ def test_mempool_reputation_rules_all_entities(
         + factory_contract.functions.create(
             456, "", entrypoint_contract.address
         ).build_transaction()["data"][2:]
-    )
+    ).lower()
     # it should not matter to the bundler whether sender is deployed or not
     sender = deposit_to_undeployed_sender(w3, entrypoint_contract, initcode)
     calldata = wallet.encodeABI(fn_name="setState", args=[1])
@@ -222,6 +222,7 @@ def test_mempool_reputation_rules_all_entities(
         paymasterAndData=paymaster_and_data,
     )
     response = user_op.send()
+    response.initCode = response.initCode.lower()
     assert dump_mempool() == wallet_ops
     entity_address = ""
     if entity == "sender":
@@ -230,6 +231,8 @@ def test_mempool_reputation_rules_all_entities(
         entity_address = user_op.paymasterAndData[:42]
     elif entity == "factory":
         entity_address = user_op.initCode[:42]
+    print("here--------------------------")
+    print(response)
     assert_rpc_error(response, case.stake_status, case.errorCode)
     assert_rpc_error(response, entity_address, case.errorCode)
 
