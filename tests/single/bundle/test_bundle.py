@@ -206,7 +206,7 @@ def test_mempool_reputation_rules_all_entities(
             sender=sender,
             nonce=hex(i << 64),
             callData=calldata,
-            initCode=initcode,
+            initCode=initcode.lower(),
             paymasterAndData=paymaster_and_data,
         )
         wallet_ops.append(user_op)
@@ -218,7 +218,7 @@ def test_mempool_reputation_rules_all_entities(
         sender=sender,
         nonce=hex(case.allowed_in_mempool << 64),
         callData=calldata,
-        initCode=initcode,
+        initCode=initcode.lower(),
         paymasterAndData=paymaster_and_data,
     )
     response = user_op.send()
