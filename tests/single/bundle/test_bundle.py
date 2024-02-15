@@ -210,6 +210,8 @@ def test_mempool_reputation_rules_all_entities(
             paymasterAndData=paymaster_and_data,
         )
         wallet_ops.append(user_op)
+
+    for user_op in wallet_ops:
         user_op.send()
 
     assert dump_mempool() == wallet_ops
