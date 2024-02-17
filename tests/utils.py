@@ -137,6 +137,14 @@ def send_bundle_now(url=None):
     except KeyError:
         pass
 
+def wait_for_mine(hash, maxAttempts=10, url=None):
+    for _ in range(maxAttempts):
+        response = RPCRequest(method="eth_getUserOperationByHash", params=[hash]).send(url)
+        if response.result is not None:
+            if response.result.get("blockNumber") is not None:
+                return RPCRequest(method="eth_getUserOperationReceipt", params=[hash])
+        time.sleep(1)
+    return None
 
 def set_manual_bundling_mode(url=None):
     return RPCRequest(method="debug_bundler_setBundlingMode", params=["manual"]).send(
