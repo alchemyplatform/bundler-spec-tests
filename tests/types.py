@@ -59,6 +59,30 @@ class UserOperation:
             if self.paymasterData is None:
                 self.paymasterData = "0x"
 
+    def __eq__(self, other):
+        not_eq = False
+
+        not_eq |= self.sender.lower() != other.sender.lower()
+        not_eq |= self.nonce != other.nonce
+        not_eq |= self.callData != other.callData
+        not_eq |= self.callGasLimit != other.callGasLimit
+        not_eq |= self.verificationGasLimit != other.verificationGasLimit
+        not_eq |= self.preVerificationGas != other.preVerificationGas
+        not_eq |= self.maxFeePerGas != other.maxFeePerGas
+        not_eq |= self.maxPriorityFeePerGas != other.maxPriorityFeePerGas
+        not_eq |= self.signature != other.signature
+
+        if self.factory is not None:
+            not_eq |= self.factory.lower() != other.factory.lower()
+            not_eq |= self.factoryData != other.factoryData
+        if self.paymaster is not None:
+            not_eq |= self.paymaster.lower() != other.paymaster.lower()
+            not_eq |= self.paymasterData != other.paymasterData
+            not_eq |= self.paymasterVerificationGasLimit != other.paymasterVerificationGasLimit
+            not_eq |= self.paymasterPostOpGasLimit != other.paymasterPostOpGasLimit
+
+        return not not_eq
+
     def send(self, entrypoint=None, url=None):
         if entrypoint is None:
             entrypoint = CommandLineArgs.entrypoint

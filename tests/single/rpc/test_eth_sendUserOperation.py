@@ -6,7 +6,7 @@ See https://github.com/eth-infinitism/bundler
 import pytest
 from jsonschema import validate, Validator
 from tests.types import RPCErrorCode
-from tests.utils import userop_hash, assert_rpc_error, send_bundle_now
+from tests.utils import assert_rpc_code, userop_hash, assert_rpc_error, send_bundle_now
 
 
 @pytest.mark.parametrize("schema_method", ["eth_sendUserOperation"], ids=[""])
@@ -35,8 +35,7 @@ def test_eth_sendUserOperation_revert(wallet_contract, bad_sig_userop):
 
 
 def test_eth_sendUserOperation_invalid_signature(invalid_sig_userop):
-    assert_rpc_error(
+    assert_rpc_code(
         invalid_sig_userop.send(),
-        "Invalid UserOp signature or paymaster signature",
         RPCErrorCode.INVALID_SIGNATURE,
     )

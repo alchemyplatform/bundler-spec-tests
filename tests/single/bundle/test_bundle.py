@@ -126,6 +126,9 @@ def test_mempool_reputation_rules_all_entities(
     w3, entrypoint_contract, paymaster_contract, factory_contract, entity, case
 ):
     wallet = deploy_wallet_contract(w3)
+    paymaster = paymaster_contract.address
+    # 'nothing' is a special string to pass validation
+    paymaster_data = to_hex(text="nothing")
     factory = factory_contract.address
     factory_data = factory_contract.functions.create(
         456, "", entrypoint_contract.address
@@ -167,9 +170,6 @@ def test_mempool_reputation_rules_all_entities(
     # fill the mempool with the allowed number of UserOps
     for i in range(allowed_in_mempool):
 
-        paymaster = None
-        paymaster_data = None
-
         if entity != "factory":
             factory_contract = deploy_and_deposit(
                 w3, entrypoint_contract, "TestRulesFactory", False
@@ -177,6 +177,7 @@ def test_mempool_reputation_rules_all_entities(
 
         if entity != "sender":
             # differentiate 'sender' address unless checking it to avoid hitting the 4 transactions limit :-(
+            factory = factory_contract.address
             factory_data = factory_contract.functions.create(
                 i + 123, "", entrypoint_contract.address
             ).build_transaction()["data"]
@@ -205,6 +206,8 @@ def test_mempool_reputation_rules_all_entities(
             paymasterPostOpGasLimit="0x10000",
         )
         wallet_ops.append(user_op)
+
+    for user_op in wallet_ops:
         user_op.send()
 
     assert dump_mempool() == wallet_ops
@@ -376,15 +379,15 @@ def test_ban_user_sender_double_role_in_bundle(w3, entrypoint_contract):
 @pytest.mark.usefixtures("clear_state", "manual_bundling_mode")
 def test_stake_check_in_bundler(w3, paymaster_contract, entrypoint_contract):
     response = get_stake_status(paymaster_contract.address, entrypoint_contract.address)
-    assert response["stakeInfo"]["addr"] == paymaster_contract.address
-    assert response["stakeInfo"]["stake"] == "0"
-    assert response["stakeInfo"]["unstakeDelaySec"] == "0"
+    assert response["stakeInfo"]["addr"].lower() == paymaster_contract.address.lower()
+    assert str(response["stakeInfo"]["stake"]) == "0"
+    assert str(response["stakeInfo"]["unstakeDelaySec"]) == "0"
     assert response["isStaked"] is False
     staked_paymaster = deploy_and_deposit(
         w3, entrypoint_contract, "TestRulesPaymaster", True
     )
     response = get_stake_status(staked_paymaster.address, entrypoint_contract.address)
-    assert response["stakeInfo"]["addr"] == staked_paymaster.address
-    assert response["stakeInfo"]["stake"] == "1000000000000000000"
-    assert response["stakeInfo"]["unstakeDelaySec"] == "2"
+    assert response["stakeInfo"]["addr"].lower() == staked_paymaster.address.lower()
+    assert str(response["stakeInfo"]["stake"]) == "1000000000000000000"
+    assert str(response["stakeInfo"]["unstakeDelaySec"]) == "2"
     assert response["isStaked"] is True

@@ -87,13 +87,12 @@ def deploy_state_contract(w3):
 
 
 def pack_factory(factory, factory_data):
-    if factory is None:
+    if factory is None or factory == "0x":
         return "0x"
     return to_prefixed_hex(factory) + to_hex(factory_data)
 
 
 def pack_uints(high128, low128):
-    print("pack_uints", high128, low128)
     return ((int(str(high128), 16) << 128) + int(str(low128), 16)).to_bytes(32, "big")
 
 
@@ -103,7 +102,7 @@ def pack_paymaster(
     paymaster_post_op_gas_limit,
     paymaster_data,
 ):
-    if paymaster is None:
+    if paymaster is None or paymaster == "0x":
         return "0x"
     if paymaster_data is None:
         paymaster_data = ""
@@ -134,6 +133,7 @@ def userop_hash(helper_contract, userop):
         ),
         userop.signature,
     )
+
     return (
         "0x"
         + helper_contract.functions.getUserOpHash(CommandLineArgs.entrypoint, payload)
@@ -155,6 +155,12 @@ def assert_rpc_error(response, message, code):
         assert message.lower() in response.message.lower()
     except AttributeError as exc:
         raise AttributeError(f"expected error object, got:\n{response}") from exc
+
+def assert_rpc_code(response, code):
+    try:
+        assert response.code == code
+    except AttributeError as exc:
+        raise Exception(f"expected error object, got:\n{response}") from exc
 
 
 def get_sender_address(w3, factory, factory_data):
@@ -247,8 +253,8 @@ def set_reputation(address, ops_seen=1, ops_included=2, url=None):
                 [
                     {
                         "address": address,
-                        "opsSeen": ops_seen,
-                        "opsIncluded": ops_included,
+                        "opsSeen": hex(ops_seen),
+                        "opsIncluded": hex(ops_included),
                     }
                 ],
                 CommandLineArgs.entrypoint,

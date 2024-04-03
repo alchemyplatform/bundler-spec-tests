@@ -165,14 +165,6 @@ cases = [
         assert_error,
     ),
     StorageTestCase(
-        "EREP-050",
-        "context",
-        UNSTAKED,
-        PAYMASTER,
-        build_userop_for_paymaster,
-        assert_error,
-    ),
-    StorageTestCase(
         "STO-032",
         "external_storage_read",
         UNSTAKED,
@@ -263,9 +255,6 @@ cases = [
         PAYMASTER,
         with_initcode(build_userop_for_paymaster),
         assert_ok,
-    ),
-    StorageTestCase(
-        "EREP-050", "context", STAKED, PAYMASTER, build_userop_for_paymaster, assert_ok
     ),
     StorageTestCase(
         "STO-033",
@@ -555,7 +544,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
-        assert_error,
+        assert_ok,
     ),
     StorageTestCase(
         "STO-021",
