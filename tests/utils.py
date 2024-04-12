@@ -109,6 +109,11 @@ def assert_rpc_error(response, message, code, error_message=None):
             raise Exception(error_message) from exc
         raise Exception(f"expected error object, got:\n{response}") from exc
 
+def assert_rpc_code(response, code):
+    try:
+        assert response.code == code
+    except AttributeError as exc:
+        raise Exception(f"expected error object, got:\n{response}") from exc
 
 def get_sender_address(w3, initcode):
     helper = deploy_contract(w3, "Helper")
@@ -151,6 +156,14 @@ def dump_mempool(url=None):
         mempool[i] = UserOperation(**entry)
     return mempool
 
+# check if the actual mempool contains exactly the expected operations.
+def check_mempool(actual, helper_contract, url=None):
+    expected = dump_mempool(url)
+    assert len(expected) == len(actual), f"expected {len(expected)} operations, got {len(actual)}"
+    expected_hashes = {userop_hash(helper_contract, x) for x in expected}
+    for op in actual:
+        hash = userop_hash(helper_contract, op)
+        assert hash in expected_hashes, f"unexpected operation in mempool: {op}"
 
 # wait for mempool propagation.
 # ref_dump - a "dump_mempool" taken from that bundler before the tested operation.
@@ -201,8 +214,8 @@ def set_reputation(address, ops_seen=1, ops_included=2, url=None):
                 [
                     {
                         "address": address,
-                        "opsSeen": ops_seen,
-                        "opsIncluded": ops_included,
+                        "opsSeen": hex(ops_seen),
+                        "opsIncluded": hex(ops_included),
                     }
                 ],
                 CommandLineArgs.entrypoint,

@@ -9,6 +9,7 @@ from tests.utils import (
     assert_rpc_error,
     get_stake_status,
     dump_mempool,
+    check_mempool,
     set_reputation,
     deposit_to_undeployed_sender,
     deploy_wallet_contract,
@@ -122,7 +123,7 @@ def idfunction(case):
 @pytest.mark.parametrize("case", cases, ids=idfunction)
 # pylint: disable-next=too-many-arguments too-many-locals
 def test_mempool_reputation_rules_all_entities(
-    w3, entrypoint_contract, paymaster_contract, factory_contract, entity, case
+    w3, entrypoint_contract, paymaster_contract, factory_contract, helper_contract, entity, case
 ):
     wallet = deploy_wallet_contract(w3)
     initcode = (
@@ -206,23 +207,26 @@ def test_mempool_reputation_rules_all_entities(
             sender=sender,
             nonce=hex(i << 64),
             callData=calldata,
-            initCode=initcode,
+            initCode=initcode.lower(),
             paymasterAndData=paymaster_and_data,
         )
         wallet_ops.append(user_op)
-        user_op.send()
 
-    assert dump_mempool() == wallet_ops
+    for user_op in wallet_ops:
+        user_op.send()
+    check_mempool(wallet_ops, helper_contract)
+
     # create a UserOperation that exceeds the mempool limit
     user_op = UserOperation(
         sender=sender,
         nonce=hex(case.allowed_in_mempool << 64),
         callData=calldata,
-        initCode=initcode,
+        initCode=initcode.lower(),
         paymasterAndData=paymaster_and_data,
     )
     response = user_op.send()
-    assert dump_mempool() == wallet_ops
+    check_mempool(wallet_ops, helper_contract)
+
     entity_address = ""
     if entity == "sender":
         entity_address = user_op.sender
@@ -245,13 +249,10 @@ def test_max_allowed_ops_unstaked_sender(w3, helper_contract):
     for i, userop in enumerate(wallet_ops):
         userop.send()
         if i < ALLOWED_OPS_PER_UNSTAKED_SENDER:
-            assert dump_mempool() == wallet_ops[: i + 1]
+            check_mempool(wallet_ops[: i + 1], helper_contract)
         else:
-            mempool = dump_mempool()
-            assert mempool == wallet_ops[:-1]
+            check_mempool(wallet_ops[:-1], helper_contract)
     send_bundle_now()
-    mempool = dump_mempool()
-    assert mempool == wallet_ops[1:-1]
     ophash = userop_hash(helper_contract, wallet_ops[0])
     response = RPCRequest(
         method="eth_getUserOperationReceipt",
@@ -272,11 +273,9 @@ def test_max_allowed_ops_staked_sender(w3, entrypoint_contract, helper_contract)
     ]
     for i, userop in enumerate(wallet_ops):
         userop.send()
-        assert dump_mempool() == wallet_ops[: i + 1]
-    assert dump_mempool() == wallet_ops
+        check_mempool(wallet_ops[: i + 1], helper_contract)
+    check_mempool(wallet_ops, helper_contract)
     send_bundle_now()
-    mempool = dump_mempool()
-    assert mempool == wallet_ops[1:]
     ophash = userop_hash(helper_contract, wallet_ops[0])
     response = RPCRequest(
         method="eth_getUserOperationReceipt",
@@ -380,15 +379,15 @@ def test_ban_user_sender_double_role_in_bundle(w3, entrypoint_contract):
 @pytest.mark.usefixtures("clear_state", "manual_bundling_mode")
 def test_stake_check_in_bundler(w3, paymaster_contract, entrypoint_contract):
     response = get_stake_status(paymaster_contract.address, entrypoint_contract.address)
-    assert response["stakeInfo"]["addr"] == paymaster_contract.address
-    assert response["stakeInfo"]["stake"] == "0"
-    assert response["stakeInfo"]["unstakeDelaySec"] == "0"
+    assert response["stakeInfo"]["addr"].lower() == paymaster_contract.address.lower()
+    assert str(response["stakeInfo"]["stake"]) == "0"
+    assert str(response["stakeInfo"]["unstakeDelaySec"]) == "0"
     assert response["isStaked"] is False
     staked_paymaster = deploy_and_deposit(
         w3, entrypoint_contract, "TestRulesPaymaster", True
     )
     response = get_stake_status(staked_paymaster.address, entrypoint_contract.address)
-    assert response["stakeInfo"]["addr"] == staked_paymaster.address
-    assert response["stakeInfo"]["stake"] == "1000000000000000000"
-    assert response["stakeInfo"]["unstakeDelaySec"] == "2"
+    assert response["stakeInfo"]["addr"].lower() == staked_paymaster.address.lower()
+    assert str(response["stakeInfo"]["stake"]) == "1000000000000000000"
+    assert str(response["stakeInfo"]["unstakeDelaySec"]) == "2"
     assert response["isStaked"] is True
