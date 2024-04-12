@@ -154,7 +154,8 @@ cases = [
         build_userop_for_paymaster,
         assert_ok,
     ),
-    StorageTestCase(
+
+   StorageTestCase(
         "STO-022",
         "account_reference_storage_init_code",
         UNSTAKED,
@@ -547,14 +548,15 @@ cases = [
         with_initcode(build_userop_for_sender, deploy_staked_rule_factory),
         assert_ok,
     ),
-    StorageTestCase(
-        "STO-022",
-        "account_reference_storage_init_code",
-        UNSTAKED,
-        PAYMASTER,
-        with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
-        assert_error,
-    ),
+    # This test case is diverged with v0.7 EP.  
+    #StorageTestCase(
+    #    "STO-022",
+    #    "account_reference_storage_init_code",
+    #    UNSTAKED,
+    #    PAYMASTER,
+    #    with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
+    #    assert_ok,
+    #),
     StorageTestCase(
         "STO-021",
         "account_reference_storage_struct",
@@ -776,7 +778,6 @@ def test_rule(w3, entrypoint_contract, case):
 def test_enough_verification_gas(w3, entrypoint_contract):
     beneficiary = w3.eth.accounts[0]
 
-    callGasLimit = hex(20000)
     wallet = deploy_wallet_contract(w3)
     calldata = wallet.encodeABI(fn_name="wasteGas")
 
@@ -785,11 +786,11 @@ def test_enough_verification_gas(w3, entrypoint_contract):
         sender=wallet.address,
         nonce="0x0",
         callData=calldata,
-        callGasLimit=callGasLimit,
-        verificationGasLimit=hex(10**6),
-        maxPriorityFeePerGas=hex(10**10),
-        maxFeePerGas=hex(10**10),
-        preVerificationGas=hex(10**6),
+        callGasLimit=hex(0),
+        verificationGasLimit=hex(0),
+        maxPriorityFeePerGas=hex(0),
+        maxFeePerGas=hex(0),
+        preVerificationGas=hex(0),
     )
     response = RPCRequest(
         method="eth_estimateUserOperationGas",
@@ -797,6 +798,7 @@ def test_enough_verification_gas(w3, entrypoint_contract):
     ).send()
     pre_verification_gas = response.result["preVerificationGas"]
     verification_gas = response.result["verificationGasLimit"]
+    call_gas = response.result["callGasLimit"]
 
     # Searching for the gas that gets us aa51 revert onchain
     low_gas = 0
@@ -809,7 +811,7 @@ def test_enough_verification_gas(w3, entrypoint_contract):
             sender=wallet.address,
             nonce="0x0",
             callData=calldata,
-            callGasLimit=callGasLimit,
+            callGasLimit=call_gas,
             verificationGasLimit=hex(mid_gas),
             maxPriorityFeePerGas=hex(10**10),
             maxFeePerGas=hex(10**10),
@@ -833,7 +835,7 @@ def test_enough_verification_gas(w3, entrypoint_contract):
         sender=wallet.address,
         nonce="0x0",
         callData=calldata,
-        callGasLimit=callGasLimit,
+        callGasLimit=call_gas,
         verificationGasLimit=hex(min_verification_gas - 1),
         maxPriorityFeePerGas=hex(10**10),
         maxFeePerGas=hex(10**10),
