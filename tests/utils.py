@@ -196,7 +196,8 @@ def assert_ok(response):
 def assert_rpc_error(response, message, code, data=None):
     try:
         assert response.code == code
-        assert message.lower() in response.message.lower()
+        if message:
+            assert message.lower() in response.message.lower()
         if data is not None:
             assert response.data == data
     except AttributeError as exc:
@@ -248,6 +249,15 @@ def dump_mempool(url=None):
         else:
             mempool[i] = UserOperation(**entry)
     return mempool
+
+# check if the actual mempool contains exactly the expected operations.
+def check_mempool(actual, helper_contract, url=None):
+    expected = dump_mempool(url)
+    assert len(expected) == len(actual), f"expected {len(expected)} operations, got {len(actual)}"
+    expected_hashes = {userop_hash(helper_contract, x) for x in expected}
+    for op in actual:
+        hash = userop_hash(helper_contract, op)
+        assert hash in expected_hashes, f"unexpected operation in mempool: {op}"
 
 
 # wait for mempool propagation.

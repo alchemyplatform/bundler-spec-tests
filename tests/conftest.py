@@ -133,6 +133,7 @@ def userop(wallet_contract):
 
 @pytest.fixture
 def execute_user_operation(userop):
+    set_manual_bundling_mode()
     userop.send()
     send_bundle_now()
 

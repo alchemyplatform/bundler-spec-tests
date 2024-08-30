@@ -207,14 +207,15 @@ cases = [
         with_initcode(build_userop_for_paymaster),
         assert_error,
     ),
-    ValidationRuleTestCase(
-        "EREP-050-regression",
-        "context",
-        UNSTAKED,
-        PAYMASTER,
-        build_userop_for_paymaster,
-        assert_ok,
-    ),
+    # Changed in v0.8
+    # ValidationRuleTestCase(
+    #     "EREP-050-regression",
+    #     "context",
+    #     UNSTAKED,
+    #     PAYMASTER,
+    #     build_userop_for_paymaster,
+    #     assert_ok,
+    # ),
     ValidationRuleTestCase(
         "STO-032",
         "external_storage_read",
@@ -632,7 +633,7 @@ cases = [
         UNSTAKED,
         PAYMASTER,
         with_initcode(build_userop_for_paymaster, deploy_staked_rule_factory),
-        assert_error,
+        assert_ok, # Changed in v0.8 to allow if factory is staked
     ),
     ValidationRuleTestCase(
         "STO-021",

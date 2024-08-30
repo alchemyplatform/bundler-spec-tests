@@ -41,7 +41,15 @@ class CommandLineArgs:
         cls.ethereum_node = ethereum_node
         cls.launcher_script = launcher_script
         cls.log_rpc = log_rpc
-
+        
+@dataclass
+class Eip7702Auth:
+    chainId: int = 0
+    address: HexStr = None
+    nonce: int = 0
+    yParity: int = 0
+    r: HexStr = None
+    s: HexStr = None
 
 @dataclass
 class UserOperation:
@@ -61,7 +69,8 @@ class UserOperation:
     paymasterData: HexStr = None
     paymasterVerificationGasLimit: HexStr = None
     paymasterPostOpGasLimit: HexStr = None
-
+    eip7702Auth: Eip7702Auth = None
+    
     def __post_init__(self):
         self.sender = to_checksum_address(self.sender)
         self.callData = self.callData.lower()

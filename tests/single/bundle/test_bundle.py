@@ -9,6 +9,7 @@ from tests.utils import (
     assert_rpc_error,
     get_stake_status,
     dump_mempool,
+    check_mempool,
     set_reputation,
     deposit_to_undeployed_sender,
     deploy_wallet_contract,
@@ -125,7 +126,7 @@ def idfunction(case):
 @pytest.mark.parametrize("case", cases, ids=idfunction)
 # pylint: disable-next=too-many-arguments too-many-locals
 def test_mempool_reputation_rules_all_entities(
-    w3, entrypoint_contract, paymaster_contract, factory_contract, entity, case
+    w3, entrypoint_contract, paymaster_contract, factory_contract, helper_contract, entity, case
 ):
     wallet = deploy_wallet_contract(w3)
     factory = factory_contract.address
@@ -213,7 +214,7 @@ def test_mempool_reputation_rules_all_entities(
         wallet_ops.append(user_op)
         assert_ok(user_op.send())
 
-    assert dump_mempool() == wallet_ops
+    check_mempool(wallet_ops, helper_contract)
     # create a UserOperation that exceeds the mempool limit
     user_op = UserOperation(
         sender=sender,
@@ -227,7 +228,7 @@ def test_mempool_reputation_rules_all_entities(
         paymasterPostOpGasLimit="0x10000",
     )
     response = user_op.send()
-    assert dump_mempool() == wallet_ops
+    check_mempool(wallet_ops, helper_contract)
     entity_address = ""
     if entity == "sender":
         entity_address = user_op.sender
@@ -253,10 +254,9 @@ def test_max_allowed_ops_unstaked_sender(w3, helper_contract):
     for i, userop in enumerate(wallet_ops):
         userop.send()
         if i < SAME_SENDER_MEMPOOL_COUNT:
-            assert dump_mempool() == wallet_ops[: i + 1]
+            check_mempool(wallet_ops[: i + 1], helper_contract)
         else:
-            mempool = dump_mempool()
-            assert mempool == wallet_ops[:-1]
+            check_mempool(wallet_ops[:-1], helper_contract)
     send_bundle_now()
     ophash = userop_hash(helper_contract, wallet_ops[0])
     response = RPCRequest(
@@ -278,8 +278,8 @@ def test_max_allowed_ops_staked_sender(w3, entrypoint_contract, helper_contract)
     ]
     for i, userop in enumerate(wallet_ops):
         userop.send()
-        assert dump_mempool() == wallet_ops[: i + 1]
-    assert dump_mempool() == wallet_ops
+        check_mempool(wallet_ops[: i + 1], helper_contract)
+    check_mempool(wallet_ops, helper_contract)
     send_bundle_now()
     ophash = userop_hash(helper_contract, wallet_ops[0])
     response = RPCRequest(
