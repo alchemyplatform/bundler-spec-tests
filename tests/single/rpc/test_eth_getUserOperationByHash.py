@@ -25,5 +25,5 @@ def test_eth_getUserOperationByHash(helper_contract, userop, schema):
 def test_eth_getUserOperationByHash_error():
     response = RPCRequest(method="eth_getUserOperationByHash", params=[""]).send()
     assert_rpc_error(
-        response, "", RPCErrorCode.INVALID_FIELDS
+        response, None, RPCErrorCode.INVALID_FIELDS
     )

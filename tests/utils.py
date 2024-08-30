@@ -179,7 +179,8 @@ def assert_ok(response):
 def assert_rpc_error(response, message, code, data=None):
     try:
         assert response.code == code
-        assert message.lower() in response.message.lower()
+        if message:
+            assert message.lower() in response.message.lower()
         if data is not None:
             assert response.data == data
     except AttributeError as exc:
