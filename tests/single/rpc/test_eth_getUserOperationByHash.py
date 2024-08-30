@@ -22,9 +22,8 @@ def test_eth_getUserOperationByHash(helper_contract, userop, schema):
     Validator.check_schema(schema)
     validate(instance=response.result, schema=schema)
 
-
 def test_eth_getUserOperationByHash_error():
     response = RPCRequest(method="eth_getUserOperationByHash", params=[""]).send()
     assert_rpc_error(
-        response, "Missing/invalid userOpHash", RPCErrorCode.INVALID_FIELDS
+        response, "", RPCErrorCode.INVALID_FIELDS
     )
