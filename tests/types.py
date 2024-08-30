@@ -42,6 +42,14 @@ class CommandLineArgs:
         cls.launcher_script = launcher_script
         cls.log_rpc = log_rpc
 
+@dataclass
+class AuthorizationTuple:
+    chainId: int = 0
+    address: HexStr = None
+    nonce: int = 0
+    yParity: int = 0
+    r: HexStr = None
+    s: HexStr = None
 
 @dataclass
 class UserOperation:
@@ -61,6 +69,7 @@ class UserOperation:
     paymasterData: HexStr = None
     paymasterVerificationGasLimit: HexStr = None
     paymasterPostOpGasLimit: HexStr = None
+    authorizationTuple: AuthorizationTuple = None
 
     def __post_init__(self):
         self.sender = to_checksum_address(self.sender)
