@@ -30,7 +30,7 @@ class CommandLineArgs:
         cls.log_rpc = log_rpc
 
 @dataclass
-class AuthorizationTuple:
+class Eip7702Auth:
     chainId: int = 0
     address: HexStr = None
     nonce: int = 0
@@ -52,7 +52,7 @@ class UserOperation:
     maxPriorityFeePerGas: HexStr = hex(3 * 10**9)
     paymasterAndData: HexStr = "0x"
     signature: HexStr = "0x"
-    authorizationTuple: AuthorizationTuple = None
+    eip7702Auth: Eip7702Auth = None
     def __post_init__(self):
         self.sender = to_checksum_address(self.sender)
 
