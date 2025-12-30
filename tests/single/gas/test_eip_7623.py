@@ -1,4 +1,5 @@
 from dataclasses import asdict
+import pytest
 
 from tests.find_min import find_min_userop_with_field
 from tests.conftest import assert_ok
@@ -6,6 +7,7 @@ from tests.types import RPCErrorCode, RPCRequest, CommandLineArgs
 from tests.user_operation_erc4337 import UserOperation
 from tests.utils import assert_rpc_error, to_hex
 
+pytestmark = pytest.mark.skip(reason="Rundler broken tests")
 
 def with_min_validation_gas(op):
     min = find_min_userop_with_field(

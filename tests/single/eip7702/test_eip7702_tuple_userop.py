@@ -13,7 +13,7 @@ from tests.utils import (
 
 AUTHORIZED_ACCOUNT_PREFIX = "ef0100"
 
-
+@pytest.mark.usefixtures("manual_bundling_mode")
 def test_send_eip_7702_tx(w3, userop, impl7702, wallet_contract, helper_contract):
     acc = w3.eth.account.create()
     fund(w3, acc.address)
