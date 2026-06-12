@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["cross_platform"]
 lock_version = "4.5.0"
-content_hash = "sha256:4a24a6692fe71046e32b466e3101230d4bb2d80644c286c3e770251ff49c6936"
+content_hash = "sha256:f9a9d6af9caa919825210e53f0b6cff18e87fd72a581a1185f7291513f64137d"
 
 [[metadata.targets]]
 requires_python = ">=3.10,<3.11"
@@ -800,16 +800,16 @@ files = [
 
 [[package]]
 name = "py-solc-x"
-version = "2.0.3"
+version = "2.0.5"
 requires_python = "<4,>=3.8"
 summary = "Python wrapper and version management tool for the solc Solidity compiler."
 dependencies = [
-    "packaging<24,>=23.1",
+    "packaging>=23.1",
     "requests<3,>=2.19.0",
 ]
 files = [
-    {file = "py-solc-x-2.0.3.tar.gz", hash = "sha256:1b5fe26d5f4976b1fcc2b3276fb2fe182633bc35757a3abf3b9af5ac57ec2544"},
-    {file = "py_solc_x-2.0.3-py3-none-any.whl", hash = "sha256:ef131f2f0e708fcaf92068a38c7569920839d259fdaa9946af3393f1dc86c5b1"},
+    {file = "py_solc_x-2.0.5-py3-none-any.whl", hash = "sha256:d6c24b699a7db8f7bf731f32dcfe8c43d7ea9d181191b2a3b7cb5e60395dd449"},
+    {file = "py_solc_x-2.0.5.tar.gz", hash = "sha256:2d8440d2be8a5577137fb2313ee211b5b35f36c4c922f274192d34f401616e83"},
 ]
 
 [[package]]
